@@ -17,6 +17,9 @@ This project uses **OpenCV** for face detection and a trained **TensorFlow/Keras
 
 ---
 
+🚀 Live Demo
+🔗 Portfolio Website: https://facemaskr.netlify.app/
+
 ---
 
 ## 🧠 How It Works
