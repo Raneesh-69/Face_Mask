@@ -6,11 +6,18 @@ A real-time face mask detection system built using **OpenCV**, **TensorFlow/Kera
 
 ---
 
+<<<<<<< HEAD
 🚀 Live Demo
+=======
+
+##🚀 Live Demo
+
+>>>>>>> 10e45b5c5c35c28596dd3fdf4cfb511c88028c7d
 🔗 Portfolio Website: https://raneesh-portfolio.netlify.app/
 
 ---
 
+<<<<<<< HEAD
 ---
 
 ## 🚀 Features
@@ -20,16 +27,36 @@ A real-time face mask detection system built using **OpenCV**, **TensorFlow/Kera
 - 🌐 Live video streaming in browser using Flask
 - 📦 Lightweight and easy to deploy
 - 🔒 Thread-safe camera handling
+=======
+
+---
+## 🚀 Features
+
+
+* 🎥 Real-time face detection using Haar Cascade
+* 🧠 Deep learning model for mask classification
+* 🌐 Live video streaming in browser using Flask
+* 📦 Lightweight and easy to deploy
+* 🔒 Thread-safe camera handling
+>>>>>>> 10e45b5c5c35c28596dd3fdf4cfb511c88028c7d
 
 ---
 
 ## 🛠️ Tech Stack
 
+<<<<<<< HEAD
 - **Python**
 - **OpenCV**
 - **TensorFlow / Keras**
 - **Flask**
 - **NumPy**
+=======
+* **Python**
+* **OpenCV**
+* **TensorFlow / Keras**
+* **Flask**
+* **NumPy**
+>>>>>>> 10e45b5c5c35c28596dd3fdf4cfb511c88028c7d
 
 ---
 
@@ -46,24 +73,53 @@ A real-time face mask detection system built using **OpenCV**, **TensorFlow/Kera
 
 ---
 
+<<<<<<< HEAD
+=======
+#
+
+>>>>>>> 10e45b5c5c35c28596dd3fdf4cfb511c88028c7d
 ## 🧠 How It Works
 
 1. Webcam captures live video
 2. OpenCV detects faces using Haar Cascade
 3. Each face is preprocessed and passed to the model
 4. Model predicts:
+<<<<<<< HEAD
    - Mask 😷
    - No Mask ❌
 
+=======
+
+   * Mask 😷
+   * No Mask ❌
+>>>>>>> 10e45b5c5c35c28596dd3fdf4cfb511c88028c7d
 5. Bounding boxes and labels are displayed on screen
 
 ---
 
 ## 📸 Output
 
+<<<<<<< HEAD
 - Green box → Mask detected
 - Red box → No mask detected
 - Confidence score shown above face
+=======
+* Green box → Mask detected
+* Red box → No mask detected
+* Confidence score shown above face
+
+---
+
+## 🔌 API Endpoints
+
+| Endpoint      | Description         |
+| ------------- | ------------------- |
+| `/`           | Web interface       |
+| `/video_feed` | Live video stream   |
+| `/health`     | Server health check |
+
+---
+>>>>>>> 10e45b5c5c35c28596dd3fdf4cfb511c88028c7d
 
 ## 🧹 Cleanup
 
@@ -71,6 +127,7 @@ The application safely releases the camera resource when stopped to prevent hard
 
 ---
 
+<<<<<<< HEAD
 ## 🚀 Deployment
 
 You can deploy this project on:
@@ -84,6 +141,8 @@ You can deploy this project on:
 
 ---
 
+=======
+>>>>>>> 10e45b5c5c35c28596dd3fdf4cfb511c88028c7d
 🤝 Connect With Me
 I’m always open to collaborations, internships, and project opportunities.
 
