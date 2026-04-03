@@ -27,7 +27,12 @@
 
         <div class="video-wrap">
           <img
-            src="{{ url_for('video_feed') }}"
+            <div class="video">
+  <p style="color: white; text-align: center; padding: 40px;">
+    🚫 Live camera not supported on deployed server<br />
+    💻 Run locally to use webcam
+  </p>
+</div>
             alt="Live camera stream showing mask detection"
             class="video"
           />

@@ -1,5 +1,5 @@
 from __future__ import annotations
-
+import time
 import atexit
 from pathlib import Path
 from threading import Lock
@@ -101,7 +101,6 @@ def detect_and_annotate(frame: np.ndarray) -> np.ndarray:
 def generate_frames():
     while True:
         if camera is None:
-            # fallback screen
             frame = np.zeros((480, 640, 3), dtype=np.uint8)
             cv2.putText(
                 frame,
@@ -135,12 +134,13 @@ def generate_frames():
             continue
 
         frame_bytes = buffer.tobytes()
+
         yield (
             b"--frame\r\n"
             b"Content-Type: image/jpeg\r\n\r\n" + frame_bytes + b"\r\n"
         )
 
-
+        time.sleep(0.1)  # 🔥 ADD THIS (reduces overload)
 @app.route("/")
 def index():
     return render_template("index.html")
