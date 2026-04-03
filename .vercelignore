@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+app.py
+requirements.txt
+runtime.txt
+mask_recognition.h5
+haarcascade_frontalface_default.xml
+templates/
