@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Live Face Mask Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero-card">
+        <p class="eyebrow">Computer Vision Demo</p>
+        <h1>Live Face Mask Detection</h1>
+        <p class="subtext">
+          Real-time webcam stream with face detection and mask classification
+          using your trained model.
+        </p>
+
+        <div class="video-wrap">
+          <img
+            src="{{ url_for('video_feed') }}"
+            alt="Live camera stream showing mask detection"
+            class="video"
+          />
+        </div>
+
+        <div class="chips">
+          <span class="chip">Mask = green</span>
+          <span class="chip warning">No Mask = red</span>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
