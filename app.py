@@ -1,12 +1,12 @@
 from __future__ import annotations
-import time
-import atexit
-from pathlib import Path
-from threading import Lock
+
+import base64
 import os
+from pathlib import Path
+
 import cv2
 import numpy as np
-from flask import Flask, Response, jsonify, render_template
+from flask import Flask, flash, render_template, request
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -16,44 +16,34 @@ CASCADE_PATH = BASE_DIR / "haarcascade_frontalface_default.xml"
 MODEL_PATH = BASE_DIR / "mask_recognition.h5"
 
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "face-mask-detection")
+
 face_cascade = cv2.CascadeClassifier(str(CASCADE_PATH))
 model = load_model(str(MODEL_PATH), compile=False)
-camera = None
-camera_lock = Lock()
 
 
-def initialize_camera() -> None:
-    global camera
+def classify_face(face_frame: np.ndarray) -> tuple[str, float, tuple[int, int, int]]:
+    face_frame = cv2.cvtColor(face_frame, cv2.COLOR_BGR2RGB)
+    face_frame = cv2.resize(face_frame, (224, 224))
+    face_frame = img_to_array(face_frame)
+    face_frame = preprocess_input(face_frame)
 
-    # Keep camera disabled for environments where hardware webcam is unavailable.
-    if os.environ.get("DISABLE_CAMERA", "").lower() in {"1", "true", "yes"}:
-        camera = None
-        return
+    prediction = model.predict(np.expand_dims(face_frame, axis=0), verbose=0)[0]
+    mask_score, no_mask_score = prediction
 
-    if os.name == "nt":
-        attempts = [
-            (0, cv2.CAP_DSHOW),
-            (0, cv2.CAP_MSMF),
-            (0, None),
-        ]
-    else:
-        attempts = [(0, None)]
+    if mask_score >= no_mask_score:
+        return "Mask", float(mask_score), (16, 185, 129)
 
-    for index, backend in attempts:
-        cap = cv2.VideoCapture(index, backend) if backend is not None else cv2.VideoCapture(index)
-        if cap is not None and cap.isOpened():
-            camera = cap
-            return
-        if cap is not None:
-            cap.release()
-
-    camera = None
+    return "No Mask", float(no_mask_score), (239, 68, 68)
 
 
-initialize_camera()
+def process_image(image_bytes: bytes) -> tuple[str | None, float | None, str | None, str | None]:
+    image_array = np.frombuffer(image_bytes, dtype=np.uint8)
+    frame = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
 
+    if frame is None:
+        return None, None, None, "Please upload a valid image file."
 
-def detect_and_annotate(frame: np.ndarray) -> np.ndarray:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(
         gray,
@@ -62,106 +52,62 @@ def detect_and_annotate(frame: np.ndarray) -> np.ndarray:
         minSize=(60, 60),
     )
 
-    face_batches = []
-    face_boxes = []
+    if len(faces) == 0:
+        return None, None, None, "No face detected in the uploaded image."
 
-    for (x, y, w, h) in faces:
-        face_frame = frame[y : y + h, x : x + w]
-        face_frame = cv2.cvtColor(face_frame, cv2.COLOR_BGR2RGB)
-        face_frame = cv2.resize(face_frame, (224, 224))
-        face_frame = img_to_array(face_frame)
-        face_frame = preprocess_input(face_frame)
-        face_batches.append(face_frame)
-        face_boxes.append((x, y, w, h))
+    x, y, w, h = max(faces, key=lambda box: box[2] * box[3])
+    face_frame = frame[y : y + h, x : x + w]
+    label, confidence, color = classify_face(face_frame)
 
-    predictions = []
-    if face_batches:
-        batch = np.array(face_batches, dtype="float32")
-        predictions = model.predict(batch, verbose=0)
+    text = f"{label}: {confidence * 100:.2f}%"
+    cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+    cv2.putText(
+        frame,
+        text,
+        (x, max(30, y - 10)),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.75,
+        color,
+        2,
+    )
 
-    for (box, pred) in zip(face_boxes, predictions):
-        x, y, w, h = box
-        mask_score, no_mask_score = pred
+    success, buffer = cv2.imencode(".jpg", frame)
+    if not success:
+        return None, None, None, "Could not process the uploaded image."
 
-        if mask_score >= no_mask_score:
-            label = "Mask"
-            color = (16, 185, 129)
-            confidence = mask_score
-        else:
-            label = "No Mask"
-            color = (239, 68, 68)
-            confidence = no_mask_score
+    encoded_image = base64.b64encode(buffer).decode("utf-8")
+    image_data = f"data:image/jpeg;base64,{encoded_image}"
 
-        text = f"{label}: {confidence * 100:.2f}%"
-        cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.58, color, 2)
-        cv2.rectangle(frame, (x, y), (x + w, y + h), color, 2)
+    return label, confidence, image_data, None
 
-    return frame
 
-def generate_frames():
-    while True:
-        if camera is None:
-            frame = np.zeros((480, 640, 3), dtype=np.uint8)
-            cv2.putText(
-                frame,
-                "Camera not supported on server",
-                (50, 240),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.7,
-                (0, 0, 255),
-                2,
-            )
-        else:
-            with camera_lock:
-                ok, frame = camera.read()
-
-            if not ok or frame is None:
-                frame = np.zeros((480, 640, 3), dtype=np.uint8)
-                cv2.putText(
-                    frame,
-                    "Camera error",
-                    (150, 240),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.7,
-                    (0, 0, 255),
-                    2,
-                )
-            else:
-                frame = detect_and_annotate(frame)
-
-        ok, buffer = cv2.imencode(".jpg", frame)
-        if not ok:
-            continue
-
-        frame_bytes = buffer.tobytes()
-
-        yield (
-            b"--frame\r\n"
-            b"Content-Type: image/jpeg\r\n\r\n" + frame_bytes + b"\r\n"
-        )
-
-        time.sleep(0.1)  # 🔥 ADD THIS (reduces overload)
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    result_label = None
+    confidence = None
+    image_data = None
 
+    if request.method == "POST":
+        uploaded_file = request.files.get("image")
 
-@app.route("/video_feed")
-def video_feed():
-    return Response(generate_frames(), mimetype="multipart/x-mixed-replace; boundary=frame")
+        if uploaded_file is None or uploaded_file.filename.strip() == "":
+            flash("Please choose an image to upload.", "error")
+        else:
+            result_label, confidence, image_data, error_message = process_image(uploaded_file.read())
+            if error_message:
+                flash(error_message, "error")
+
+    return render_template(
+        "index.html",
+        result_label=result_label,
+        confidence=confidence,
+        image_data=image_data,
+    )
 
 
 @app.route("/health")
 def health():
-    return jsonify({"status": "ok"})
-
-
-@atexit.register
-def cleanup_camera() -> None:
-    with camera_lock:
-        if camera is not None and camera.isOpened():
-            camera.release()
-
+    return {"status": "ok"}
 
 
 if __name__ == "__main__":

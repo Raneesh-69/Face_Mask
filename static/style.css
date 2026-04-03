@@ -60,7 +60,85 @@ h1 {
   color: var(--muted);
 }
 
-.video-wrap {
+.alerts {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.alert {
+  border-radius: 14px;
+  padding: 0.8rem 1rem;
+  font-weight: 700;
+}
+
+.alert.error {
+  color: #7f1d1d;
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+}
+
+.upload-card {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1.2rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+}
+
+.upload-label {
+  font-weight: 700;
+  color: var(--accent-2);
+}
+
+.upload-card input[type="file"] {
+  width: 100%;
+  font: inherit;
+}
+
+.upload-card button {
+  justify-self: start;
+  border: 0;
+  border-radius: 999px;
+  padding: 0.8rem 1.25rem;
+  font: inherit;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  cursor: pointer;
+}
+
+.result-card {
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: #f8fffb;
+}
+
+.result-title {
+  margin: 0;
+  color: var(--accent-2);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.result-card h2 {
+  margin: 0.35rem 0 0.2rem;
+  font-family: "Syne", sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.result-meta {
+  margin: 0;
+  color: var(--muted);
+}
+
+.image-wrap {
   margin-top: 1.2rem;
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -68,7 +146,7 @@ h1 {
   background: #000;
 }
 
-.video {
+.result-image {
   display: block;
   width: 100%;
   height: auto;
