@@ -18,8 +18,7 @@ MODEL_PATH = BASE_DIR / "mask_recognition.h5"
 app = Flask(__name__)
 face_cascade = cv2.CascadeClassifier(str(CASCADE_PATH))
 model = load_model(str(MODEL_PATH), compile=False)
-
-camera = cv2.VideoCapture(0)
+camera = None
 camera_lock = Lock()
 
 
@@ -68,26 +67,37 @@ def detect_and_annotate(frame: np.ndarray) -> np.ndarray:
 
     return frame
 
-
 def generate_frames():
     while True:
-        with camera_lock:
-            ok, frame = camera.read()
-
-        if not ok:
-            fallback = np.zeros((480, 640, 3), dtype=np.uint8)
+        if camera is None:
+            # fallback screen
+            frame = np.zeros((480, 640, 3), dtype=np.uint8)
             cv2.putText(
-                fallback,
-                "Camera not available",
-                (140, 240),
+                frame,
+                "Camera not supported on server",
+                (50, 240),
                 cv2.FONT_HERSHEY_SIMPLEX,
-                1.0,
+                0.7,
                 (0, 0, 255),
                 2,
             )
-            frame = fallback
         else:
-            frame = detect_and_annotate(frame)
+            with camera_lock:
+                ok, frame = camera.read()
+
+            if not ok or frame is None:
+                frame = np.zeros((480, 640, 3), dtype=np.uint8)
+                cv2.putText(
+                    frame,
+                    "Camera error",
+                    (150, 240),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.7,
+                    (0, 0, 255),
+                    2,
+                )
+            else:
+                frame = detect_and_annotate(frame)
 
         ok, buffer = cv2.imencode(".jpg", frame)
         if not ok:
@@ -118,7 +128,7 @@ def health():
 @atexit.register
 def cleanup_camera() -> None:
     with camera_lock:
-        if camera.isOpened():
+        if camera is not None and camera.isOpened():
             camera.release()
 
 
