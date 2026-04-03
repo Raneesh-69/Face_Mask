@@ -22,6 +22,37 @@ camera = None
 camera_lock = Lock()
 
 
+def initialize_camera() -> None:
+    global camera
+
+    # Keep camera disabled for environments where hardware webcam is unavailable.
+    if os.environ.get("DISABLE_CAMERA", "").lower() in {"1", "true", "yes"}:
+        camera = None
+        return
+
+    if os.name == "nt":
+        attempts = [
+            (0, cv2.CAP_DSHOW),
+            (0, cv2.CAP_MSMF),
+            (0, None),
+        ]
+    else:
+        attempts = [(0, None)]
+
+    for index, backend in attempts:
+        cap = cv2.VideoCapture(index, backend) if backend is not None else cv2.VideoCapture(index)
+        if cap is not None and cap.isOpened():
+            camera = cap
+            return
+        if cap is not None:
+            cap.release()
+
+    camera = None
+
+
+initialize_camera()
+
+
 def detect_and_annotate(frame: np.ndarray) -> np.ndarray:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(
