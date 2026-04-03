@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Face Mask Detector</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Syne:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="static/style.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero-card">
+        <p class="eyebrow">Computer Vision Demo</p>
+        <h1>Upload an Image</h1>
+        <p class="subtext">
+          Simple static classifier for Mask vs No Mask using browser-side AI.
+        </p>
+
+        <div id="status" class="alert">Loading model...</div>
+
+        <form class="upload-card" id="uploadForm">
+          <label class="upload-label" for="imageInput">Select image</label>
+          <input
+            id="imageInput"
+            name="image"
+            type="file"
+            accept="image/*"
+            required
+          />
+          <button id="analyzeButton" type="submit" disabled>
+            Analyze Image
+          </button>
+        </form>
+
+        <div class="result-card" id="resultCard" hidden>
+          <p class="result-title">Result</p>
+          <h2 id="resultLabel"></h2>
+          <p class="result-meta" id="resultMeta"></p>
+        </div>
+
+        <div class="image-wrap" id="imageWrap" hidden>
+          <img id="previewImage" alt="Uploaded image" class="result-image" />
+        </div>
+
+        <div class="chips">
+          <span class="chip">Mask = green</span>
+          <span class="chip warning">No Mask = red</span>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.21.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1"></script>
+    <script src="static/app.js"></script>
+  </body>
+</html>

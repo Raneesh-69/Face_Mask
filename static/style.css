@@ -70,12 +70,22 @@ h1 {
   border-radius: 14px;
   padding: 0.8rem 1rem;
   font-weight: 700;
+  margin-top: 1rem;
+  color: #1e293b;
+  background: #e2e8f0;
+  border: 1px solid #cbd5e1;
 }
 
 .alert.error {
   color: #7f1d1d;
   background: #fee2e2;
   border: 1px solid #fecaca;
+}
+
+.alert.success {
+  color: #0f5132;
+  background: #d1fae5;
+  border: 1px solid #a7f3d0;
 }
 
 .upload-card {
@@ -131,6 +141,14 @@ h1 {
   margin: 0.35rem 0 0.2rem;
   font-family: "Syne", sans-serif;
   font-size: clamp(1.5rem, 3vw, 2.2rem);
+}
+
+.result-card h2.mask {
+  color: #0f5132;
+}
+
+.result-card h2.no-mask {
+  color: #b91c1c;
 }
 
 .result-meta {

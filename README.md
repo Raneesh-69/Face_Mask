@@ -1,88 +1,42 @@
-# 😷 Face Mask Recognition System
+# 😷 Face Mask Detection Web App
 
-A real-time face mask detection system built using **OpenCV**, **TensorFlow/Keras**, and **Flask**. This application detects faces from a webcam feed and classifies whether the person is wearing a mask or not, displaying the result directly in a web interface.
+A computer vision web application that detects whether a person is wearing a face mask using deep learning. Users can upload an image, and the system analyzes it to classify faces as **Mask** or **No Mask**.
 
----
-
----
-
-##🚀 Live Demo
-
-🔗 Portfolio Website: https://raneesh-portfolio.netlify.app/
-
----
+This project uses **OpenCV** for face detection and a trained **TensorFlow/Keras** model for classification, wrapped in a simple and clean web interface.
 
 ---
 
 ## 🚀 Features
 
-- 🎥 Real-time face detection using Haar Cascade
-- 🧠 Deep learning model for mask classification
-- 🌐 Live video streaming in browser using Flask
-- 📦 Lightweight and easy to deploy
-- 🔒 Thread-safe camera handling
+- 📤 Upload image for mask detection
+- 🧠 Deep learning model for classification
+- 👤 Face detection using Haar Cascade
+- ⚡ Fast and accurate predictions
+- 🌐 Simple and responsive web interface
+- ☁️ Easily deployable (no webcam required)
 
 ---
 
-## 🛠️ Tech Stack
-
-- **Python**
-- **OpenCV**
-- **TensorFlow / Keras**
-- **Flask**
-- **NumPy**
-
 ---
-
-## 📂 Project Structure
-
-```
-├── app.py
-├── mask_recognition.h5
-├── haarcascade_frontalface_default.xml
-├── templates/
-│   └── index.html
-└── README.md
-```
-
----
-
-#
 
 ## 🧠 How It Works
 
-1. Webcam captures live video
-2. OpenCV detects faces using Haar Cascade
-3. Each face is preprocessed and passed to the model
-4. Model predicts:
-   - Mask 😷
-   - No Mask ❌
+1. User uploads an image
+2. OpenCV detects faces in the image
+3. Each face is preprocessed (resized & normalized)
+4. The trained model predicts:
+   - 😷 Mask
+   - ❌ No Mask
 
-5. Bounding boxes and labels are displayed on screen
+5. Result is displayed with bounding boxes and labels
 
 ---
 
 ## 📸 Output
 
-- Green box → Mask detected
-- Red box → No mask detected
-- Confidence score shown above face
-
----
-
-## 🔌 API Endpoints
-
-| Endpoint      | Description         |
-| ------------- | ------------------- |
-| `/`           | Web interface       |
-| `/video_feed` | Live video stream   |
-| `/health`     | Server health check |
-
----
-
-## 🧹 Cleanup
-
-The application safely releases the camera resource when stopped to prevent hardware issues.
+- 🟢 Green box → Mask detected
+- 🔴 Red box → No mask detected
+- 📊 Confidence score displayed
 
 ---
 
