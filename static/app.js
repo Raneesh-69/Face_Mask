@@ -89,3 +89,33 @@ uploadForm.addEventListener("submit", async (event) => {
 });
 
 loadModel();
+function downloadImage(url, filename) {
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Image could not be downloaded");
+      }
+
+      return response.blob();
+    })
+    .then((blob) => {
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = blobUrl;
+      link.download = filename;
+
+      document.body.appendChild(link);
+
+      link.click();
+
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(blobUrl);
+    })
+    .catch((error) => {
+      console.error("Download failed:", error);
+      alert("Unable to download this image.");
+    });
+}
